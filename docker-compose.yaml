@@ -10,15 +10,21 @@ services:
       - green
 
   blue:
-    image: yimikaade/wonderful:devops-stage-two
+    image: ${BLUE_IMAGE}
     container_name: blue
     ports:
-      - "8081:8081"
-    restart: on-failure
+      - "8081:4000"
+    environment:
+      - PORT=${PORT_BLUE}
+      - APP_POOL=${ACTIVE_POOL_BLUE}
+      - RELEASE_ID=${RELEASE_ID_BLUE}
   green:
-    image: yimikaade/wonderful:devops-stage-two
+    image: ${GREEN_IMAGE}
     container_name: green
     ports:
-      - "8082:8082"
-    restart: on-failure
+      - "8082:5000"
+    environment:
+      - PORT=${PORT_GREEN}
+      - APP_POOL=${ACTIVE_POOL_GREEN}
+      - RELEASE_ID=${RELEASE_ID_GREEN}
     
