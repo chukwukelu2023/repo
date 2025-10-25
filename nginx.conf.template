@@ -1,0 +1,46 @@
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    # Upstream where BLUE is Primary, GREEN is Backup
+    upstream blue_primary {
+        server app_blue:4000 max_fails=1 fail_timeout=5s;
+        server app_green:4000 backup;
+    }
+
+    # Upstream where GREEN is Primary, BLUE is Backup
+    upstream green_primary {
+        server app_green:4000 max_fails=1 fail_timeout=5s;
+        server app_blue:4000 backup;
+    }
+
+    # Using map to select an upstream
+    map "${ACTIVE_POOL}" $active_backend {
+        default     blue_primary;      
+        blue        blue_primary;      
+        green       green_primary;     
+    }
+
+    server {
+        listen 80;
+
+        location / {
+            proxy_pass http://$active_backend;
+
+            # Header Forwarding
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+
+            # Zero-Downtime Failover & Retry Policy
+            proxy_connect_timeout 1s;
+            proxy_send_timeout 1s;
+            proxy_read_timeout 1s;
+            proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+            proxy_next_upstream_tries 2;
+        }
+    }
+}
