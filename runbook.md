@@ -7,7 +7,7 @@ The system provides real-time visibility into the Nginx Blue/Green routing state
 
 | **Metric** | **Value** | **Notes** |
 |-------------|------------|-----------|
-| **Service Name** | Nginx Monitor Sidecar | Python application reading Nginx logs |
+| **Service Name** | monitor | Python application reading Nginx logs |
 | **Repository Link** | [GitHub Docs](https://docs.github.com/en/get-started/using-github/connecting-to-github) |  |
 | **Location of Files** | `watcher.py` and `docker-compose.yml` |  |
 | **Alert Channel** | `#alerts-nginx-monitor` | Slack channel receiving alerts |
