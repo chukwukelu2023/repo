@@ -4,6 +4,7 @@ services:
     container_name: nginx
     volumes:
       - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      - ./logs:/var/log/nginx
     ports:
       - "8080:80"
     environment:
@@ -32,7 +33,29 @@ services:
       - PORT=${PORT}
       - APP_POOL=green
       - RELEASE_ID=${RELEASE_ID_GREEN}
-    
+
+  monitor:
+    image: python:3.11-slim
+    container_name: monitor
+    volumes:
+      - ./logs:/var/log/nginx
+      - ./log_watcher/watcher.py:/app/watcher.py
+      - ./log_watcher/requirements.txt:/app/requirements.txt
+    environment:
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+      - ACTIVE_POOL=${ACTIVE_POOL}
+      - ERROR_RATE_THRESHOLD=${ERROR_RATE_THRESHOLD}
+      - WINDOW_SIZE=${WINDOW_SIZE}
+      - ALERT_COOLDOWN=${ALERT_COOLDOWN}
+      - MAINTENANCE_MODE=${MAINTENANCE_MODE}
+      - CHECK_INTERVAL=${CHECK_INTERVAL}
+      - NGINX_LOG_PATH=/var/log/nginx/access.log
+    working_dir: /app
+    command: >
+      /bin/sh -c "pip install -r requirements.txt && python watcher.py"
+
 networks:
   default:
     driver: bridge
+volumes:
+  nginx_logs:
