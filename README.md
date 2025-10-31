@@ -43,8 +43,8 @@ It watches the Nginx access logs in real-time, detects failovers, tracks error r
 | - Sends Slack alerts  |
 +-----------------------+
 ````
-
-The set up is quite simple and flexible. The docker-compose.yml is used to configure the nginx server set up and also a side container with a python watcher.py script that scans through the nginx logs to detect any anomaly which it sends to slack through slack webhook url
+## Setup
+The set up is quite simple and flexible. The docker-compose.yml is used to configure the nginx server set up and also a side container with a python watcher.py script that scans through the nginx logs to detect any anomaly which it sends to slack through slack webhook url. Clone the repo from `https://github.com/chukwukelu2023/repo.git` and checout to the project directory. Run `docker compose up --build` .
 
 ### Step 1
 
